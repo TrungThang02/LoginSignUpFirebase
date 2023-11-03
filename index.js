@@ -1,0 +1,14 @@
+/**
+ * @format
+ */
+
+import {AppRegistry} from 'react-native';
+import App from './App';
+
+
+//import App from './SignUp'
+//import App from './Auth/SignUp'
+
+import {name as appName} from './app.json';
+
+AppRegistry.registerComponent(appName, () => App);
