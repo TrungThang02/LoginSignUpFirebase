@@ -1,90 +1,113 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+import { View, Text, Pressable, StyleSheet, Image, Alert } from 'react-native';
 import { TextInput } from 'react-native-paper';
+import { Formik } from 'formik';
+import * as yup from 'yup';
 import auth from '@react-native-firebase/auth';
-import Icon from 'react-native-paper';
-
 
 const SignUp = ({ navigation }) => {
     const img = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1280px-Google_2015_logo.svg.png"
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [passwordRepeat, setPasswordRepeat] = useState('');
 
-    const handleSignUp = () => {
+    const handleSignUp = (values) => {
+        const { email, password } = values;
+
         auth()
-            .createUserWithEmailAndPassword(email, password, passwordRepeat)
+            .createUserWithEmailAndPassword(email, password)
             .then(() => {
-                console.log('User account created & signed in!');
-                navigation.navigate('Home');
+                Alert.alert('Thông báo', 'Đăng ký thành công!')
+                navigation.navigate('Login');
             })
             .catch(error => {
                 if (error.code === 'auth/email-already-in-use') {
-                    console.log('That email address is already in use!');
+                   Alert.alert('Thông báo','Email này đã được sử dụng!')
                 }
 
                 if (error.code === 'auth/invalid-email') {
-                    console.log('That email address is invalid!');
+                    
                 }
 
                 console.error(error);
             });
     };
 
+    const validationSchema = yup.object().shape({
+        email: yup.string().email('Email không hợp lệ').required('Vui lòng nhập email'),
+        password: yup.string().min(6, 'Mật khẩu phải ít nhất 6 ký tự').required('Vui lòng nhập mật khẩu'),
+        passwordRepeat: yup.string()
+            .oneOf([yup.ref('password'), null], 'Mật khẩu lặp lại không trùng khớp')
+            .required('Vui lòng nhập lại mật khẩu'),
+    });
+
     return (
         <View style={styles.container}>
             <Image
                 style={styles.Logo}
-                source={{
-                    uri: img,
-                }}
+                source={{ uri: img }}
             />
-            <TextInput
-                style={styles.TextInput}
-                onChangeText={setEmail}
-                value={email}
-                placeholder="Email address"
-                keyboardType="email-address"
-                inputMode="email"
-                underlineColor='transparent'
-                label="Nhập vào email"
-            />
-            <TextInput
-                style={styles.TextInput}
-                onChangeText={setPassword}
-                value={password}
-                placeholder="Password"
-                label="Nhập mật khẩu"
-                underlineColor='transparent'
-                secureTextEntry
-                right={<TextInput.Icon icon="eye" />}
-            />
-            <TextInput
-                style={styles.TextInput}
-                onChangeText={setPasswordRepeat}
-                value={passwordRepeat}
-                placeholder="Password"
-                label="Nhập lại mật khẩu"
-                underlineColor='transparent'
-                secureTextEntry
-                right={<TextInput.Icon icon="eye" />}
-            />
-            <Pressable onPress={handleSignUp} style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: 15,
-                backgroundColor: '#D6E5FA',
+            <Formik
+                
+                initialValues={{ email: '', password: '', passwordRepeat: '' }}
+                onSubmit={values => handleSignUp(values)}
+                validationSchema={validationSchema}
+            >
+                {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+                    <>
+                        <TextInput
+                            style={styles.TextInput}
+                            onChangeText={handleChange('email')}
+                            onBlur={handleBlur('email')}
+                            value={values.email}
+                            placeholder="Email address"
+                            keyboardType="email-address"
+                            inputMode="email"
+                            underlineColor='transparent'
+                            label="Nhập vào email"
+                        />
+                        {errors.email && <Text style={{ color: 'red' ,marginLeft:20, padding: 10}}>{errors.email}</Text>}
 
-                width: 350,
-                alignSelf: 'center',
-                borderRadius: 10
-            }}>
-                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#333' }}>
-                    Đăng ký tài khoản
-                </Text>
-            </Pressable>
+                        <TextInput
+                            style={styles.TextInput}
+                            onChangeText={handleChange('password')}
+                            onBlur={handleBlur('password')}
+                            value={values.password}
+                            placeholder="Password"
+                            label="Nhập mật khẩu"
+                            underlineColor='transparent'
+                            secureTextEntry
+                            right={<TextInput.Icon icon="eye" />}
+                        />
+                        {errors.password && <Text style={{color: 'red' ,marginLeft:20, padding: 10}}>{errors.password}</Text>}
+
+                        <TextInput
+                            style={styles.TextInput}
+                            onChangeText={handleChange('passwordRepeat')}
+                            onBlur={handleBlur('passwordRepeat')}
+                            value={values.passwordRepeat}
+                            placeholder="Password"
+                            label="Nhập lại mật khẩu"
+                            underlineColor='transparent'
+                            secureTextEntry
+                            right={<TextInput.Icon icon="eye" />}
+                        />
+                        {errors.passwordRepeat && <Text style={{ color: 'red' ,marginLeft:20, padding: 10}}>{errors.passwordRepeat}</Text>}
+
+                        <Pressable onPress={handleSubmit} style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: 15,
+                            backgroundColor: '#D6E5FA',
+                            width: 350,
+                            alignSelf: 'center',
+                            borderRadius: 10
+                        }}>
+                            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#333' }}>
+                                Đăng ký tài khoản
+                            </Text>
+                        </Pressable>
+                    </>
+                )}
+            </Formik>
+
             <Pressable
                 onPress={() => navigation.navigate('Login')}
                 style={{
@@ -97,7 +120,6 @@ const SignUp = ({ navigation }) => {
                     Đăng nhập tài khoản
                 </Text>
             </Pressable>
-           
         </View>
     );
 };
@@ -117,7 +139,7 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 10,
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
-        marginBottom: 10,
+        marginBottom: 5,
         backgroundColor: 'transparent',
         borderColor: '#0779E4',
         borderWidth: 1,

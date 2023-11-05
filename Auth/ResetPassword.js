@@ -1,83 +1,87 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
-import { Text, Button, TextInput} from 'react-native-paper';
+import { Text, TextInput } from 'react-native-paper';
+import auth from '@react-native-firebase/auth'; // Import auth from '@react-native-firebase/auth'
 
-
-
-const ForgotPasswordScreen = () => {
-   
-    const [errorState, setErrorState] = useState('');
-    const handleSendPasswordResetEmail = values => {
-    const { email } = values;
-    auth().sendPasswordResetEmail(email)
-    .then(() => {
-    console.log('Success: Password Reset Email sent.');
-    })
-    .catch(error => setErrorState(error.message));
-};
-}
-
-const Reset = ({navigation}) => {
+const Reset = ({ navigation }) => {
     const [email, setEmail] = useState('');
+    const [errorState, setErrorState] = useState('');
+
+    const handleSendPasswordResetEmail = () => {
+        auth()
+            .fetchSignInMethodsForEmail(email)
+            .then(methods => {
+                if (methods && methods.length === 0) {
+                    Alert.alert('Thông báo', 'Tài khoản không tồn tại');
+                } else {
+                    auth()
+                        .sendPasswordResetEmail(email)
+                        .then(() => {
+                            Alert.alert('Thông báo', 'Gửi yêu cầu thành công!');
+                        })
+                        .catch(error => {
+                            setErrorState(error.message);
+                            Alert.alert('Lỗi', 'Không tìm thấy tài khoản!');
+                        });
+                }
+            })
+            .catch(error => {
+                setErrorState(error.message);
+                Alert.alert('Error', error.message);
+            });
+        }
+    const img = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1280px-Google_2015_logo.svg.png";
     
-    const img = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1280px-Google_2015_logo.svg.png"
     return (
         <View style={styles.container}>
-            {/* <Text style={{fontSize: 20, textTransform:'uppercase', alignSelf:'center', padding: 20}}>Đăng nhập hệ thống</Text> */}
             <Image
-        style={styles.Logo}
-        source={{
-          uri: img,
-        }}
-      />
+                style={styles.Logo}
+                source={{ uri: img }}
+            />
             <View>
                 <TextInput
                     style={styles.TextInput}
                     label="Nhập vào Email"
                     value={email}
-                    underlineColor='transparent'
                     onChangeText={email => setEmail(email)}
-                  
                 />
             </View>
-           
+
             <View>
-                <TouchableOpacity 
-                onPress={ForgotPasswordScreen}
-                style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 15,
-                    backgroundColor: '#D6E5FA',
-                   
-                    width: 350,
-                    alignSelf: 'center',
-                    borderRadius:10
-                }}
-               >
-                    <Text style={{fontSize: 17, fontWeight: 'bold', color:'#333'}}>
-                     Gửi yêu cầu đặt lại mật khẩu
+                <TouchableOpacity
+                    onPress={handleSendPasswordResetEmail} // Call the function on press
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        padding: 15,
+                        backgroundColor: '#D6E5FA',
+                        width: 350,
+                        alignSelf: 'center',
+                        borderRadius: 10
+                    }}
+                >
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#333' }}>
+                        Gửi yêu cầu đặt lại mật khẩu
                     </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity 
-                 onPress={() => navigation.navigate("Login")}
-                style={{
-                    justifyContent: 'center',
-                    alignItems: 'flex-end',
-                    marginRight: 10,
-                    padding: 10,
-                }}>
-                    <Text style={{fontSize: 17, fontStyle:'italic', fontWeight:'bold', color:'#0779E4'}}>
-                       Đăng nhập tài khoản
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("Login")}
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                        marginRight: 10,
+                        padding: 10,
+                    }}
+                >
+                    <Text style={{ fontSize: 17, fontStyle: 'italic', fontWeight: 'bold', color: '#0779E4' }}>
+                        Đăng nhập tài khoản
                     </Text>
                 </TouchableOpacity>
             </View>
-
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
