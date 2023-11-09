@@ -1,7 +1,11 @@
 import React from 'react';
 import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
-import { TextInput, IconButton, Icon, IconButtonProps } from 'react-native-paper';
+import { View, Text, Pressable, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import { TextInput} from 'react-native-paper';
+//import { MaterialCommunityIcons } from '@expo/vector-icons/MaterialCommunityIcons';
+//import { Entypo } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import auth from '@react-native-firebase/auth';
@@ -56,6 +60,9 @@ async function googleSignOut()  {
 
 const Login = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleLogin = (values) => {
     const { email, password } = values;
@@ -80,9 +87,6 @@ const Login = ({ navigation }) => {
     email: yup.string().email('Email không hợp lệ').required('Vui lòng nhập email'),
     password: yup.string().min(6, 'Mật khẩu phải ít nhất 6 ký tự').required('Vui lòng nhập mật khẩu'),
   });
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword); 
-  };
   const img = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1280px-Google_2015_logo.png";
 
   return (
@@ -113,7 +117,7 @@ const Login = ({ navigation }) => {
               underlineColor='transparent'
             />
             {errors.email && <Text style={{ color: 'red' ,marginLeft:20, padding: 10}}>{errors.email}</Text>}
-
+            <View>
             <TextInput
               style={styles.TextInput}
               onChangeText={handleChange('password')}
@@ -122,14 +126,13 @@ const Login = ({ navigation }) => {
               label="Nhập mật khẩu"
               placeholder="Password"
               underlineColor='transparent'
-              secureTextEntry
-               right={
-                <TextInput.Icon
-                  name={showPassword ? 'eye-off' : 'eye'} 
-                  onPress={toggleShowPassword} 
-                />
-              }
+              secureTextEntry={!showPassword} 
+              right={<TextInput.Icon icon={showPassword ? 'eye' : 'eye-off'} onPress={toggleShowPassword}/>}
             />
+              
+            </View>
+           
+             
             {errors.password && <Text style={{ color: 'red' ,marginLeft:20, padding: 10}}>{errors.password}</Text>}
 
             <Pressable onPress={handleSubmit} style={{
@@ -139,18 +142,21 @@ const Login = ({ navigation }) => {
               backgroundColor: '#D6E5FA',
               width: 350,
               alignSelf: 'center',
-              borderRadius: 10
+              borderRadius: 10,
+              marginTop: 5,
+             
             }}>
               <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#333' }}>
                 Đăng nhập tài khoản
               </Text>
+       
             </Pressable>
           </>
         )}
       </Formik>
 
       <View style={{justifyContent:'center', alignItems:'center', padding: 10 }}>
-      <GoogleSigninButton
+      <Pressable
         onPress = {
           ()=>onGoogleButtonPress()
           .then(()=>{
@@ -161,7 +167,20 @@ const Login = ({ navigation }) => {
             console.log(error)
           })
         }
-        />
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 15,
+          backgroundColor: '#D6E5FA',
+          width: 350,
+          alignSelf: 'center',
+          borderRadius: 10
+        }}
+        >
+        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#333' }}>
+                Đăng nhập bằng Google
+              </Text>
+         </Pressable>
       </View>
       <View>
       <Pressable onPress={() => navigation.navigate('SignUp')} style={{

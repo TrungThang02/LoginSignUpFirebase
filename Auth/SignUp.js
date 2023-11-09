@@ -1,13 +1,17 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet, Image, Alert } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { useState } from 'react';
+import { View, Text, Pressable, StyleSheet, Image, Alert} from 'react-native';
+import { TextInput, IconButton } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import auth from '@react-native-firebase/auth';
 
 const SignUp = ({ navigation }) => {
     const img = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1280px-Google_2015_logo.svg.png"
-
+    const [showPassword, setShowPassword] = useState(false);
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+      };
     const handleSignUp = (values) => {
         const { email, password } = values;
 
@@ -73,8 +77,9 @@ const SignUp = ({ navigation }) => {
                             placeholder="Password"
                             label="Nhập mật khẩu"
                             underlineColor='transparent'
-                            secureTextEntry
-                            right={<TextInput.Icon icon="eye" />}
+                            secureTextEntry={!showPassword} 
+                            right={<TextInput.Icon icon={showPassword ? 'eye' : 'eye-off'} onPress={toggleShowPassword}/>}
+                              
                         />
                         {errors.password && <Text style={{color: 'red' ,marginLeft:20, padding: 10}}>{errors.password}</Text>}
 
@@ -86,8 +91,8 @@ const SignUp = ({ navigation }) => {
                             placeholder="Password"
                             label="Nhập lại mật khẩu"
                             underlineColor='transparent'
-                            secureTextEntry
-                            right={<TextInput.Icon icon="eye" />}
+                            secureTextEntry={!showPassword} 
+                            right={<TextInput.Icon icon={showPassword ? 'eye' : 'eye-off'} onPress={toggleShowPassword}/>}
                         />
                         {errors.passwordRepeat && <Text style={{ color: 'red' ,marginLeft:20, padding: 10}}>{errors.passwordRepeat}</Text>}
 

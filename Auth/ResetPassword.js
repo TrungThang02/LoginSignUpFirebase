@@ -1,37 +1,28 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
-import auth from '@react-native-firebase/auth'; // Import auth from '@react-native-firebase/auth'
+import auth from '@react-native-firebase/auth';
 
 const Reset = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [errorState, setErrorState] = useState('');
 
     const handleSendPasswordResetEmail = () => {
+
         auth()
-            .fetchSignInMethodsForEmail(email)
-            .then(methods => {
-                if (methods && methods.length === 0) {
-                    Alert.alert('Thông báo', 'Tài khoản không tồn tại');
-                } else {
-                    auth()
-                        .sendPasswordResetEmail(email)
-                        .then(() => {
-                            Alert.alert('Thông báo', 'Gửi yêu cầu thành công!');
-                        })
-                        .catch(error => {
-                            setErrorState(error.message);
-                            Alert.alert('Lỗi', 'Không tìm thấy tài khoản!');
-                        });
-                }
+            .sendPasswordResetEmail(email)
+            .then(() => {
+                Alert.alert('Thông báo', 'Gửi yêu cầu thành công!');
             })
             .catch(error => {
                 setErrorState(error.message);
-                Alert.alert('Error', error.message);
+                Alert.alert('Lỗi', 'Không tìm thấy tài khoản!');
             });
-        }
+    }
+
+
     const img = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1280px-Google_2015_logo.svg.png";
-    
+
     return (
         <View style={styles.container}>
             <Image
@@ -49,7 +40,7 @@ const Reset = ({ navigation }) => {
 
             <View>
                 <TouchableOpacity
-                    onPress={handleSendPasswordResetEmail} // Call the function on press
+                    onPress={handleSendPasswordResetEmail}
                     style={{
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -91,7 +82,7 @@ const styles = StyleSheet.create({
 
 
     },
-    TextInput:{
+    TextInput: {
         width: 350,
         alignSelf: 'center',
         borderTopLeftRadius: 10,
@@ -100,15 +91,15 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 10,
         marginBottom: 10,
         backgroundColor: 'transparent',
-        borderColor:'#0779E4',
+        borderColor: '#0779E4',
         borderWidth: 1,
     },
     Logo: {
-        width: 200, 
+        width: 200,
         height: 66,
-        marginBottom:15,
+        marginBottom: 15,
         alignSelf: 'center',
-        
+
     },
 })
 
