@@ -7,6 +7,7 @@ import Login from './Auth/Login';
 import SignUp from './Auth/SignUp';
 import Reset from './Auth/ResetPassword';
 import Home from './screen/Home';
+import Phone from './Auth/Phone';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,7 @@ const App = () => {
         <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
         <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }}/>
         <Stack.Screen name="Reset" component={Reset} options={{ headerShown: false }}/>
+        <Stack.Screen name="Phone" component={Phone} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

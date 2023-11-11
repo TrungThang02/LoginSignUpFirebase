@@ -48,14 +48,14 @@ async function onGoogleButtonPress() {
 };
 
 
-async function googleSignOut()  {
-  try {
-    await GoogleSignin.signOut();
-    setUser(null); // Remember to remove the user from your app's state as well
-  } catch (error) {
-    console.error(error);
-  }
-};
+// async function googleSignOut()  {
+//   try {
+//     await GoogleSignin.signOut();
+//     setUser(null); // Remember to remove the user from your app's state as well
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
   
 
 const Login = ({ navigation }) => {
@@ -179,6 +179,25 @@ const Login = ({ navigation }) => {
         >
         <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#333' }}>
                 Đăng nhập bằng Google
+              </Text>
+         </Pressable>
+      </View>
+      <View style={{justifyContent:'center', alignItems:'center'}}>
+      <Pressable onPress = {()=> navigation.navigate("Phone")}
+         
+        
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 15,
+          backgroundColor: '#D6E5FA',
+          width: 350,
+          alignSelf: 'center',
+          borderRadius: 10
+        }}
+        >
+        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#333' }}>
+                Đăng nhập bằng SDT
               </Text>
          </Pressable>
       </View>

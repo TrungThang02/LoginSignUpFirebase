@@ -7,6 +7,13 @@ import auth from '@react-native-firebase/auth';
 const Home = ({ navigation }) => {
     const [initializing, setInitializing] = useState(true);
     const [user, setUser] = useState(null);
+    const currentUser = auth().currentUser;
+    useEffect(() => {
+      if (currentUser) {
+          console.log('User Phone Number:', currentUser.phoneNumber);
+      }
+  }, [currentUser]);
+
   
     const onAuthStateChanged = user => {
       setUser(user);
@@ -31,11 +38,15 @@ const Home = ({ navigation }) => {
         </View>
       );
     }
-  
+    (user)
     return (
       <View style={styles.container}>
         <Text style={styles.text}>Đăng nhập thành công</Text>
-        <Text style={styles.text}>Xin chào: {user.email} !</Text>
+        {user.email ? 
+        (<Text style={styles.text}>Xin chào: {user.email} !</Text>)
+        :(<Text style={styles.text}>Xin chào: {currentUser.phoneNumber} !</Text>)}
+        
+
         <Pressable onPress={() => auth().signOut().then(() => navigation.navigate('Login'))} style={styles.button}>
           <Text style={styles.text}>Đăng xuất</Text>
         </Pressable>
