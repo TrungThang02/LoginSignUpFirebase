@@ -22,31 +22,16 @@ const Home = ({ navigation }) => {
   
     useEffect(() => {
       const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-      return subscriber; // Unsubscribe on unmount
+      return subscriber; 
     }, []);
   
     if (initializing) return null;
-  
-    if (!user) {
-      navigation.navigate('Login');
-      return (
-        <View style={styles.container}>
-          <Text style={styles.text}>Logged out</Text>
-          <Pressable onPress={() => navigation.navigate('Auth')} style={styles.button}>
-            <Text style={styles.text}>Log in page</Text>
-          </Pressable>
-        </View>
-      );
-    }
-    (user)
     return (
       <View style={styles.container}>
         <Text style={styles.text}>Đăng nhập thành công</Text>
         {user.email ? 
         (<Text style={styles.text}>Xin chào: {user.email} !</Text>)
         :(<Text style={styles.text}>Xin chào: {currentUser.phoneNumber} !</Text>)}
-        
-
         <Pressable onPress={() => auth().signOut().then(() => navigation.navigate('Login'))} style={styles.button}>
           <Text style={styles.text}>Đăng xuất</Text>
         </Pressable>
